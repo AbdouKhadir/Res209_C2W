@@ -1,0 +1,3 @@
+2017-05-14 14:08:32+0200 [-] Log opened.
+2017-05-14 14:08:32+0200 [-] --> c2w.test.protocol.udp_client_test.c2wUdpChatClientTestCase.test_one_user_login_udp_client_test <--
+2017-05-14 14:08:32+0200 [-] Starting protocol <c2w.protocol.udp_chat_client.c2wUdpChatClientProtocol instance at 0x7f42ad4ff200>

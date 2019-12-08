@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,
+     which is available here: http://xml.resource.org. -->
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!-- One method to get references from the online citation libraries.
+     There has to be one entity for each item to be referenced. 
+     An alternate method (rfc include) is described in the references. -->
+
+<!ENTITY RFC2629 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2629.xml">
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!-- used by XSLT processors -->
+<!-- For a complete list and description of processing instructions (PIs), 
+     please see http://xml.resource.org/authoring/README.html. -->
+<!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
+     (Here they are set differently than their defaults in xml2rfc v1.32) -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!-- control the table of contents (ToC) -->
+<?rfc toc="yes"?>
+<!-- generate a ToC -->
+<?rfc tocdepth="4"?>
+<!-- the number of levels of subsections in ToC. default: 3 -->
+<!-- control references -->
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space 
+     (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="no" ?>
+<!-- do not display copyright and other IETF-related stuff -->
+<?rfc private="(c) GROUP 4, 2017" ?>
+
+<rfc category="info" docName="draft-ietf-xml2rfc-template-05" ipr="trust200902">
+  <!-- category values: std, bcp, info, exp, and historic
+     ipr values: full3667, noModification3667, noDerivatives3667
+     you can add the attributes updates="NNNN" and obsoletes="NNNN" 
+     they will automatically be output with "(if approved)" -->
+
+  <!-- ***** FRONT MATTER ***** -->
+
+  <front>
+    <!-- The abbreviated title is used in the page header - it is only necessary if the 
+         full title is longer than 39 characters -->
+
+    <title abbrev="Abbreviated Title">Group 4: c2w protocol specification proposal
+    </title>
+
+    <!-- add 'role="editor"' below for the editors if appropriate -->
+
+    
+   <author fullname="Guillaume BERTHOME" initials="G.B."
+            surname="BERTHOME">
+      <organization>Telecom Bretagne</organization>
+
+      <address>
+        <postal>
+          <street></street>
+
+          <!-- Reorder these if your country does things differently -->
+
+          <city>Brest</city>
+
+          <region></region>
+
+          <code></code>
+
+          <country>France</country>
+        </postal>
+
+        
+
+        <email>guillaume.berthome@telecom-bretagne.eu</email>
+
+        <!-- uri and facsimile elements may also be added -->
+      </address>
+    </author>
+
+    <author fullname="Matthieu BACHELOT" initials="M.B."
+            surname="BACHELOT">
+      <organization>Telecom Bretagne</organization>
+
+      <address>
+        <postal>
+          <street></street>
+
+          <!-- Reorder these if your country does things differently -->
+
+          <city>Brest</city>
+
+          <region></region>
+
+          <code></code>
+
+          <country>France</country>
+        </postal>
+
+        
+
+        <email>matthieu.bachelot@telecom-bretagne.eu</email>
+
+        <!-- uri and facsimile elements may also be added -->
+      </address>
+    </author>
+
+    <author fullname="Romain JUILLET" initials="F.N."
+            surname="JUILLET">
+      <organization>Telecom Bretagne</organization>
+
+      <address>
+        <postal>
+          <street></street>
+
+          <!-- Reorder these if your country does things differently -->
+
+          <city>Brest</city>
+
+          <region></region>
+
+          <code></code>
+
+          <country>France</country>
+        </postal>
+
+        
+
+        <email>romain.juillet@telecom-bretagne.eu</email>
+
+        <!-- uri and facsimile elements may also be added -->
+      </address>
+    </author>
+
+
+     <author fullname="Serigne DIOUF" initials="S.D."
+            surname="DIOUF">
+      <organization>Telecom Bretagne</organization>
+
+      <address>
+        <postal>
+          <street></street>
+
+          <!-- Reorder these if your country does things differently -->
+
+          <city>Brest</city>
+
+          <region></region>
+
+          <code></code>
+
+          <country>France</country>
+        </postal>
+
+        
+
+        <email>serigne.diouf@telecom-bretagne.eu</email>
+
+        <!-- uri and facsimile elements may also be added -->
+      </address>
+    </author>
+
+    
+
+    <date month="APR" year="2017" />
+
+    <!-- If the month and year are both specified and are the current ones, xml2rfc will fill 
+         in the current day for you. If only the current year is specified, xml2rfc will fill 
+	 in the current day and month for you. If the year is not the current one, it is 
+	 necessary to specify at least a month (xml2rfc assumes day="1" if not specified for the 
+	 purpose of calculating the expiry date).  With drafts it is normally sufficient to 
+	 specify just the year. -->
+
+    <keyword>c2w</keyword>
+
+    <!-- Keywords will be incorporated into HTML output
+         files in a meta tag but they have no effect on text or nroff
+         output. If you submit your draft to the RFC Editor, the
+         keywords will be used for the search engine. -->
+
+    <abstract>
+      <t>Insert an abstract: MANDATORY.</t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section title="Introduction">
+      <t>Le protocole C2W permet la communication instantanée entre plusieurs utilisateurs
+      sur l'application C2W. Cette dernière permet de pouvoir regarder des film en streaming tout en conversant
+      avec les autres membres regardant le même film. Il est également possible de converser avec l'ensemble des
+      utilisateurs sur une salle principale.</t>
+
+    </section>
+
+    <section title="Fonctionnement">
+      <t>C2W est une application permettant à la fois de regarder des films en streaming et de tchatter en direct
+      avec les autres membres visionnant le même film.
+      L'utilisateur se connecte au serveur en indiquant un nom d'utilisateur qui permettra de l'identifier sur
+      l'application. Tous les membres sont listés dans un panneau, avec leur statut : A lorsqu'il ne visionne pas 
+      de films, M lorsqu'il visionne un film.
+      Après connexion, l'utilisation arrive dans la Main Room de l'application : c'est sur interface que 
+      l'utilisateur peur choisir un film à visionner et également voir tous les utilisateurs qui sont actuellement 
+      connectés sur le serveur. Dans cette room, l'utilisateur peut converser avec tous lers membres connectés
+      sur le serveur qui ne sont pas entrain de visionner un film.
+      Lorsque l'utilisateur sélectionne un film à visionner, il entre dans une "Moovie Room". Il peut alors
+      uniquement converser avec les mambres visionnant le même film que lui.</t>
+    </section>
+
+   <section title="Packet format">
+    <t>
+     Le protocol C2W utilise différents format de paquetDescribe the packet format and the headers. For example, if you have a binary header,
+     you can use a figure like the following example (where we have used the generic
+     name "Field" for most of the fields, you should use the names corresponding to your solution):
+    </t>
+
+    
+    <t>Message Chat
+      <figure>
+        <artwork>
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |F|SEQ|LEN|          USER NAME            |                     |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                                                               |
+    |                                                               |     
+    |                                                               |
+    .                                                               .
+    .                       Message Data                            .
+    .                                                               .
+    |                                                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        </artwork>
+      </figure>
+    </t>
+        
+    
+    <t>ACK
+      <figure>
+        <artwork>
+    +-+-+-+
+    |F|SEQ| 
+    +-+-+-+
+        </artwork>
+      </figure>
+    </t>
+        
+    
+    <t>Message Connexion
+      <figure>
+        <artwork>
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |F|          USER NAME            |                             |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |                                                               |
+    |                                                               |     
+    |                                                               |
+    .                                                               .
+    .                       Message Data                            .
+    .                                                               .
+    |                                                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        </artwork>
+      </figure>
+    </t>
+
+    <t>
+      <figure>
+        <artwork>
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |    Field 1  |   Field 2   |      Field 3      |   Field 4     |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |           Field 5             |                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+    |                                                               |
+    .                                                               .
+    .                       Message Data                            .
+    .                                                               .
+    |                                                               |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        </artwork>
+      </figure>
+    </t>
+  </section>
+
+    <section title="Example scenario">
+      <section title="Scenario 1 : Connexion">
+        <section title="Connexion à l'application">
+          <t>L'utilisateur se connecte à l'appliation via une interface graphique. Il peut renseigner sur celle-ci
+          l'adresse du serveur, le port ainsi que son nom d'utilisateur.</t>
+
+          <t>Le contenu détaillé de chaque message est détaillé dans la partie XXX.</t>
+          
+            <t>
+              <figure>
+                <artwork>
+
+
+
+     Alice                                            Serveur
+        |                                               |
+        |             Message 1 (Request)               |
+        |----------------------------------------------&gt;|
+        |                (111 CONNECT)                  |
+        |                                               |
+        |                                               |
+        |                                               |
+        |               Message 2 (Response)            |
+        |&lt;----------------------------------------------|
+        |                  (121 SUCCESS)                |
+        |                                               |
+        |                                               |
+        |                                               |
+        |             Message 1 (Request)               |
+        |----------------------------------------------&gt;|
+        |                (010 ASKMOVIES)                |
+        |                                               |
+        |                                               |
+        |                                               |
+        |               Message 2 (Response)            |
+        |&lt;----------------------------------------------|
+        |             (010 SENDNUMBERMOVIES)            |
+        |                                               |
+        |                                               |
+        |                                               |
+        |               Message 2 (Response)            |
+        |&lt;----------------------------------------------|
+        |                (010 SENDMOVIES)               |
+        |                                               |
+        |                                               |
+        |                                               |
+        |             Message 1 (Request)               |
+        |----------------------------------------------&gt;|
+        |                (020 ASKUSERS)                 |
+        |                                               |
+        |                                               |
+        |                                               |
+        |               Message 2 (Response)            |
+        |&lt;----------------------------------------------|
+        |                  (121 SUCCESS)                |
+        
+              </artwork>
+            </figure>
+          </t>
+
+
+<t>Si le message 111 C0NNECT n'arrive pas à destination (i.e le client ne reçoit pas de message 121 
+SUCCESS), il sera automatiquement renvoyé par le client au bout de 3 secondes pour 3 fois consécutives. 
+Si jamais le message 111 CONNECT n'arrive toujours pas après les 3 envois, un message d'erreur sera affiché à
+l'utilisateur.</t>
+
+          <t>
+            <figure>
+              <artwork>
+                
+
+
+            
+     Alice                                            Serveur
+        |                                               |
+        |             Message 1 (Request)               |
+        |-------------------------------                |
+        |                (111 CONNECT)                  |
+        |                                               |
+        |                                               |
+        
+              </artwork>
+            </figure>
+          </t>
+
+        
+<t>Si le message 121 SUCCESS n'arrive pas à destination sur le client, une nouvelle requête 111 CONNECT
+sera renvoyée au bout de trois secondes, pour trois fois consécutives. Dans le cas où le serveur aurait 
+traité la requête mais le message 121 SUCCESS n'arrive pas, la requête sera renvoyée et un contrôle
+au niveau du serveur sera effectué afin de ne pas créer plusieurs fois de suite le même utilisateur.</t>
+          <t>
+            <figure>
+                <artwork>
+                  
+   
+        Alice                                            Serveur
+        |                                               |
+        |             Message 1 (Request)               |
+        |----------------------------------------------&gt;|
+        |                (111 CONNECT)                  |
+        |                                               |
+        |                                               |
+        |               Message 2 (Response)            |
+        |                  -----------------------------|
+        |                  (121 SUCCESS)                |
+        
+              </artwork>
+            </figure>
+          </t>
+
+        </section>
+
+        <section title="Connexion à une movie room">
+        <t>La connexion à une room revient à sélectionner un film parmi ceux proposés dans la liste de la main
+        room. L'utilisateur pourra ensuite visionner la film choisi et converser avec tous les autres membres
+        visionnant le même film.</t>
+
+        <t>Le contenu détaillé de chaque message est détaillé dans la partie XXX.</t>
+            <t>
+              <figure>
+                <artwork>
+
+
+
+     Alice                                            Serveur
+        |                                               |
+        |             Message 1 (Request)               |
+        |----------------------------------------------&gt;|
+        |                (112 CONNECTMOR)               |
+        |                                               |
+        |                                               |
+        |               Message 2 (Response)            |
+        |&lt;----------------------------------------------|
+        |                  (121 SUCCESS)                |
+        
+              </artwork>
+            </figure>
+          </t>
+
+<t>Si le message 111 C0NNECTMOR n'arrive pas à destination (i.e le client ne reçoit pas de message 121 
+SUCCESS), il sera automatiquement renvoyé par le client au bout de 3 secondes pour 3 fois consécutives. 
+Si jamais le message 111 CONNECT n'arrive toujours pas après les 3 envois, un message d'erreur sera affiché à
+l'utilisateur.</t>
+
+            <t>
+              <figure>
+                <artwork>
+            
+     Alice                                            Serveur
+        |                                               |
+        |             Message 1 (Request)               |
+        |-------------------------------                |
+        |                (112 CONNECTMOR)               |
+        |                                               |
+        |                                               |
+        
+              </artwork>
+            </figure></t>
+
+<t>Si le message 121 SUCCESS n'arrive pas à destination sur le client, une nouvelle requête 111 CONNECT
+sera renvoyée au bout de trois secondes, pour trois fois consécutives.</t>
+
+            <t><figure>
+              <artwork>
+          
+        Alice                                            Serveur
+        |                                               |
+        |             Message 1 (Request)               |
+        |----------------------------------------------&gt;|
+        |                (112 CONNECTMOR)               |
+        |                                               |
+        |                                               |
+        |               Message 2 (Response)            |
+        |                  -----------------------------|
+        |                  (121 SUCCESS)                |
+        
+              </artwork>
+            </figure></t>
+        </section>
+     </section><!--End of example 1-->
+  </section><!--End of examples-->
+
+    <section title="Packets Headers">
+      <t>Les en-tetes sont différents suivant les types de messages, car certain sont de taille fixes (messages de connexion...)
+    et d'autre de taille dynamique (messages du chat).
+    Pour ce qui est des messages de tailles fixes, les en-tetes seront de la forme suivante:
+        - Flag (partie qui permet de determiner le type de message envoyé) codé sur un octet (ici le flag est donné en base 10)
+            -connexion: 111
+            -passage de main room a movie room: 112
+            -passage de movie room a main room: 113
+            -demande de liste des films: 1
+            -demande de liste des utilisateurs: 2
+            
+            </t>
+    </section>
+
+    <section title="Les messages c2w">
+      <t> 
+      Chaque message est précédé d'un numéro de flag rajouté par le protocole selon la source 
+      et la nature du message (voir les plages de flags dans "format de paquet").
+      </t>
+        <section title="du client vers le serveur C-->S">
+          <section title="C-->S exemple1: demande de connexion ">
+            <t>
+            Pour se connecter, le client doit disposer d'un nom d'utilisateur unique de longueur 
+            maximale 16 caractères (non spéciaux), qui sera codé en binaire avec le flag dédié 
+            (voir format de paquet).
+            Après s'être connecté, le client déjà dans la salle principale (main room) peut demander à voir 
+            la liste des films disponibles et afficher les utilisateurs disponibles pour chatter.
+            </t> 
+          </section>
+          <section title="C-->S exemple2: chatter avec les autres clients ">
+            <t>
+            Pour chatter avec les autres clients, le client envoie un message (de taille dynamique ) 
+            au serveur qui se chargera de le diffuser à tous les utilisateurs dans la même salle que lui.
+            </t>
+          </section>
+        </section>
+      <section title="du serveur vers le client ">
+      </section>
+    </section>
+
+    
+</middle>
+   </rfc>

@@ -1,0 +1,224 @@
+
+
+
+Sample Protocol Specification                                   A. Blanc
+                                                        Telecom Bretagne
+                                                               June 2014
+
+
+     Sample Protocol Specification:  FindIpAddress (Binary Version)
+
+Abstract
+
+   Sample protocol specification for the binary version of the
+   FineIpAddress protocol.  The goal of this protocol is to allow a
+   client to query a server to find the IP address corresponding to a
+   given name.  This an overly-simplified protocol which is only meant
+   as a simple example.
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . . . 2
+     1.1.  Requirements Language . . . . . . . . . . . . . . . . . . . 2
+   2.  Message Format  . . . . . . . . . . . . . . . . . . . . . . . . 2
+   3.  Reliability . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+   4.  Server Configuration and Multiple Servers . . . . . . . . . . . 3
+   5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+   6.  Normative References  . . . . . . . . . . . . . . . . . . . . . 4
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . . . 4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Blanc                                                           [Page 1]
+
+                      FindIpAddress Binary Protocol            June 2014
+
+
+1.  Introduction
+
+   The goal of the FindIpAddress protocol is to allow clients to find
+   the IP address that corresponds to a given name.  Each client MUST
+   know the IP address and corresponding port number of at least one
+   instance of a FindIpAddress server.
+
+   For the sake of simplicity, the message format is the same for all
+   the messages.
+
+   Clients can use either UDP or TCP to exchange messages with a server.
+   When sending a reply, the server MUST use the same layer four
+   protocol used by the client for the corresponding request.
+
+1.1.  Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [RFC2119].
+
+
+2.  Message Format
+
+   All messages have the same format, shown in figure Figure 1.
+
+
+   0                   1                   2                   3
+   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                          IP Address                           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |        Name Length            |                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+   |                                                               |
+   .                                                               .
+   .                  Name (variable length)                       .
+   .                                                               .
+   |                                                               |
+   |                                                               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+                                 Figure 1
+
+
+
+
+
+
+
+
+Blanc                                                           [Page 2]
+
+                      FindIpAddress Binary Protocol            June 2014
+
+
+   IP Address field (32 bits)
+
+      In a (positive) response message, this field contains the IP
+      address corresponding to the name contained in the Name field.  In
+      a (negative) response, i.e., when the requested name does not
+      exist, the server MUST set this field to 0.  In a request message
+      the client MUST set this field to 0
+
+   Name Length field (16 bits)
+
+      This field specifies the total length in bytes of the Name field.
+      The sender MUST ensure that this field contains the correct value.
+
+   Name field (variable length)
+
+      This field contains the name that is the object of the request,
+      encoded in ASCII.  Both the client and the server MUST always
+      specify the name in each message.
+
+   The server MUST always reply to a request, either with a positive
+   response (in this case the IP Address field contains the IP address
+   corresponding to the name requested by the client) or with a negative
+   response (in this case the IP Address field MUST be set to 0).
+
+
+3.  Reliability
+
+   When using UDP, a client MAY resend a request for which it has not
+   yet received a response after a certain time.  In order not to
+   overload servers, clients SHOULD wait at least 2 seconds before
+   resending a request.
+
+
+4.  Server Configuration and Multiple Servers
+
+   Each server MUST maintain a local data base mapping names to IP
+   addresses.  If a server does not find a certain name in its local
+   data base, instead of immediately sending a negative response, the
+   server MAY contact one or more other servers, asking if they know the
+   IP address corresponding to the name requested by the client.  Upon
+   receiving a response the server should forward it to the
+   corresponding client.  Note that in this case it is up to the server
+   to resend the request to another server, if it has not received a
+   response after a certain time.
+
+
+
+
+
+
+
+Blanc                                                           [Page 3]
+
+                      FindIpAddress Binary Protocol            June 2014
+
+
+5.  Examples
+
+   Suppose a client would like to know the IP address corresponding to
+   the computer1.example.com name.  It should send the following message
+   to the server (in hexadecimal notation):
+
+   IP Address = 00 00 00 00
+   Name Length = 15
+   Name = 63 6f 6d 70 75 74 65 72 31 2e 65 78 61 6d 70 6c 65 2e 63 6f 6d
+
+   If the IP address of the computer1.example.com name is 34.23.44.1,
+   the server MUST respond with the following message:
+
+   IP Address = 20 17 2c 01
+   Name Length = 15
+   Name = 63 6f 6d 70 75 74 65 72 31 2e 65 78 61 6d 70 6c 65 2e 63 6f 6d
+
+   If, instead, the requested name does not exist, the server MUST
+   respond with the following message:
+
+   IP Address = 00 00 00 00
+   Name Length = 15
+   Name = 63 6f 6d 70 75 74 65 72 31 2e 65 78 61 6d 70 6c 65 2e 63 6f 6d
+
+
+6.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+
+Author's Address
+
+   Alberto Blanc
+   Telecom Bretagne
+   Cesson Sevigne,
+   France
+
+   Phone: +33 02 99 12 24 25
+   Email: alberto.blanc@telecom-bretagne.eu
+
+
+
+
+
+
+
+
+
+
+
+Blanc                                                           [Page 4]
+

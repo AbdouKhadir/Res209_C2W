@@ -1,0 +1,448 @@
+
+
+
+
+                                                             G. BERTHOME
+                                                             M. BACHELOT
+                                                              F. JUILLET
+                                                                S. DIOUF
+                                                        Telecom Bretagne
+                                                           April 4, 2017
+
+
+              Group 4: c2w protocol specification proposal
+                     draft-ietf-xml2rfc-template-05
+
+Abstract
+
+   Insert an abstract: MANDATORY.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   1
+   2.  Fonctionnement  . . . . . . . . . . . . . . . . . . . . . . .   1
+   3.  Packet format . . . . . . . . . . . . . . . . . . . . . . . .   2
+   4.  Example scenario  . . . . . . . . . . . . . . . . . . . . . .   3
+     4.1.  Scenario 1 : Connexion  . . . . . . . . . . . . . . . . .   3
+       4.1.1.  Connexion a l'application . . . . . . . . . . . . . .   3
+       4.1.2.  Connexion a une movie room  . . . . . . . . . . . . .   5
+   5.  Packets Headers . . . . . . . . . . . . . . . . . . . . . . .   7
+   6.  Les messages c2w  . . . . . . . . . . . . . . . . . . . . . .   7
+     6.1.  du client vers le serveur C-->S . . . . . . . . . . . . .   7
+       6.1.1.  C-->S exemple1: demande de connexion  . . . . . . . .   7
+       6.1.2.  C-->S exemple2: chatter avec les autres clients . . .   7
+     6.2.  du serveur vers le client . . . . . . . . . . . . . . . .   7
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
+
+1.  Introduction
+
+   Le protocole C2W permet la communication instantanee entre plusieurs
+   utilisateurs sur l'application C2W.  Cette derniere permet de pouvoir
+   regarder des film en streaming tout en conversant avec les autres
+   membres regardant le meme film.  Il est egalement possible de
+   converser avec l'ensemble des utilisateurs sur une salle principale.
+
+2.  Fonctionnement
+
+   C2W est une application permettant a la fois de regarder des films en
+   streaming et de tchatter en direct avec les autres membres visionnant
+   le meme film.  L'utilisateur se connecte au serveur en indiquant un
+   nom d'utilisateur qui permettra de l'identifier sur l'application.
+   Tous les membres sont listes dans un panneau, avec leur statut : A
+   lorsqu'il ne visionne pas de films, M lorsqu'il visionne un film.
+
+
+
+BERTHOME, et al.         Expires October 6, 2017                [Page 1]
+
+                            Abbreviated Title                 April 2017
+
+
+   Apres connexion, l'utilisation arrive dans la Main Room de
+   l'application : c'est sur interface que l'utilisateur peur choisir un
+   film a visionner et egalement voir tous les utilisateurs qui sont
+   actuellement connectes sur le serveur.  Dans cette room,
+   l'utilisateur peut converser avec tous lers membres connectes sur le
+   serveur qui ne sont pas entrain de visionner un film.  Lorsque
+   l'utilisateur selectionne un film a visionner, il entre dans une
+   "Moovie Room".  Il peut alors uniquement converser avec les mambres
+   visionnant le meme film que lui.
+
+3.  Packet format
+
+   Le protocol C2W utilise differents format de paquetDescribe the
+   packet format and the headers.  For example, if you have a binary
+   header, you can use a figure like the following example (where we
+   have used the generic name "Field" for most of the fields, you should
+   use the names corresponding to your solution):
+
+   Message Chat
+
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |F|SEQ|LEN|          USER NAME            |                     |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                                                               |
+       |                                                               |
+       |                                                               |
+       .                                                               .
+       .                       Message Data                            .
+       .                                                               .
+       |                                                               |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   ACK
+
+       +-+-+-+
+       |F|SEQ|
+       +-+-+-+
+
+   Message Connexion
+
+
+
+
+
+
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 6, 2017                [Page 2]
+
+                            Abbreviated Title                 April 2017
+
+
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |F|          USER NAME            |                             |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                                                               |
+       |                                                               |
+       |                                                               |
+       .                                                               .
+       .                       Message Data                            .
+       .                                                               .
+       |                                                               |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |    Field 1  |   Field 2   |      Field 3      |   Field 4     |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |           Field 5             |                               |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+       |                                                               |
+       .                                                               .
+       .                       Message Data                            .
+       .                                                               .
+       |                                                               |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+4.  Example scenario
+
+4.1.  Scenario 1 : Connexion
+
+4.1.1.  Connexion a l'application
+
+   L'utilisateur se connecte a l'appliation via une interface graphique.
+   Il peut renseigner sur celle-ci l'adresse du serveur, le port ainsi
+   que son nom d'utilisateur.
+
+   Le contenu detaille de chaque message est detaille dans la partie
+   XXX.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 6, 2017                [Page 3]
+
+                            Abbreviated Title                 April 2017
+
+
+        Alice                                            Serveur
+           |                                               |
+           |             Message 1 (Request)               |
+           |---------------------------------------------->|
+           |                (111 CONNECT)                  |
+           |                                               |
+           |                                               |
+           |                                               |
+           |               Message 2 (Response)            |
+           |<----------------------------------------------|
+           |                  (121 SUCCESS)                |
+           |                                               |
+           |                                               |
+           |                                               |
+           |             Message 1 (Request)               |
+           |---------------------------------------------->|
+           |                (010 ASKMOVIES)                |
+           |                                               |
+           |                                               |
+           |                                               |
+           |               Message 2 (Response)            |
+           |<----------------------------------------------|
+           |             (010 SENDNUMBERMOVIES)            |
+           |                                               |
+           |                                               |
+           |                                               |
+           |               Message 2 (Response)            |
+           |<----------------------------------------------|
+           |                (010 SENDMOVIES)               |
+           |                                               |
+           |                                               |
+           |                                               |
+           |             Message 1 (Request)               |
+           |---------------------------------------------->|
+           |                (020 ASKUSERS)                 |
+           |                                               |
+           |                                               |
+           |                                               |
+           |               Message 2 (Response)            |
+           |<----------------------------------------------|
+           |                  (121 SUCCESS)                |
+
+
+   Si le message 111 C0NNECT n'arrive pas a destination (i.e le client
+   ne recoit pas de message 121 SUCCESS), il sera automatiquement
+   renvoye par le client au bout de 3 secondes pour 3 fois consecutives.
+   Si jamais le message 111 CONNECT n'arrive toujours pas apres les 3
+   envois, un message d'erreur sera affiche a l'utilisateur.
+
+
+
+BERTHOME, et al.         Expires October 6, 2017                [Page 4]
+
+                            Abbreviated Title                 April 2017
+
+
+        Alice                                            Serveur
+           |                                               |
+           |             Message 1 (Request)               |
+           |-------------------------------                |
+           |                (111 CONNECT)                  |
+           |                                               |
+           |                                               |
+
+
+   Si le message 121 SUCCESS n'arrive pas a destination sur le client,
+   une nouvelle requete 111 CONNECT sera renvoyee au bout de trois
+   secondes, pour trois fois consecutives.  Dans le cas ou le serveur
+   aurait traite la requete mais le message 121 SUCCESS n'arrive pas, la
+   requete sera renvoyee et un controle au niveau du serveur sera
+   effectue afin de ne pas creer plusieurs fois de suite le meme
+   utilisateur.
+
+
+
+           Alice                                            Serveur
+           |                                               |
+           |             Message 1 (Request)               |
+           |---------------------------------------------->|
+           |                (111 CONNECT)                  |
+           |                                               |
+           |                                               |
+           |               Message 2 (Response)            |
+           |                  -----------------------------|
+           |                  (121 SUCCESS)                |
+
+
+4.1.2.  Connexion a une movie room
+
+   La connexion a une room revient a selectionner un film parmi ceux
+   proposes dans la liste de la main room.  L'utilisateur pourra ensuite
+   visionner la film choisi et converser avec tous les autres membres
+   visionnant le meme film.
+
+   Le contenu detaille de chaque message est detaille dans la partie
+   XXX.
+
+
+
+
+
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 6, 2017                [Page 5]
+
+                            Abbreviated Title                 April 2017
+
+
+        Alice                                            Serveur
+           |                                               |
+           |             Message 1 (Request)               |
+           |---------------------------------------------->|
+           |                (112 CONNECTMOR)               |
+           |                                               |
+           |                                               |
+           |               Message 2 (Response)            |
+           |<----------------------------------------------|
+           |                  (121 SUCCESS)                |
+
+
+   Si le message 111 C0NNECTMOR n'arrive pas a destination (i.e le
+   client ne recoit pas de message 121 SUCCESS), il sera automatiquement
+   renvoye par le client au bout de 3 secondes pour 3 fois consecutives.
+   Si jamais le message 111 CONNECT n'arrive toujours pas apres les 3
+   envois, un message d'erreur sera affiche a l'utilisateur.
+
+
+        Alice                                            Serveur
+           |                                               |
+           |             Message 1 (Request)               |
+           |-------------------------------                |
+           |                (112 CONNECTMOR)               |
+           |                                               |
+           |                                               |
+
+
+   Si le message 121 SUCCESS n'arrive pas a destination sur le client,
+   une nouvelle requete 111 CONNECT sera renvoyee au bout de trois
+   secondes, pour trois fois consecutives.
+
+
+           Alice                                            Serveur
+           |                                               |
+           |             Message 1 (Request)               |
+           |---------------------------------------------->|
+           |                (112 CONNECTMOR)               |
+           |                                               |
+           |                                               |
+           |               Message 2 (Response)            |
+           |                  -----------------------------|
+           |                  (121 SUCCESS)                |
+
+
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 6, 2017                [Page 6]
+
+                            Abbreviated Title                 April 2017
+
+
+5.  Packets Headers
+
+   Les en-tetes sont differents suivant les types de messages, car
+   certain sont de taille fixes (messages de connexion...) et d'autre de
+   taille dynamique (messages du chat).  Pour ce qui est des messages de
+   tailles fixes, les en-tetes seront de la forme suivante: - Flag
+   (partie qui permet de determiner le type de message envoye) code sur
+   un octet (ici le flag est donne en base 10) -connexion: 111 -passage
+   de main room a movie room: 112 -passage de movie room a main room:
+   113 -demande de liste des films: 1 -demande de liste des
+   utilisateurs: 2
+
+6.  Les messages c2w
+
+   Chaque message est precede d'un numero de flag rajoute par le
+   protocole selon la source et la nature du message (voir les plages de
+   flags dans "format de paquet").
+
+6.1.  du client vers le serveur C-->S
+
+6.1.1.  C-->S exemple1: demande de connexion
+
+   Pour se connecter, le client doit disposer d'un nom d'utilisateur
+   unique de longueur maximale 16 caracteres (non speciaux), qui sera
+   code en binaire avec le flag dedie (voir format de paquet).  Apres
+   s'etre connecte, le client deja dans la salle principale (main room)
+   peut demander a voir la liste des films disponibles et afficher les
+   utilisateurs disponibles pour chatter.
+
+6.1.2.  C-->S exemple2: chatter avec les autres clients
+
+   Pour chatter avec les autres clients, le client envoie un message (de
+   taille dynamique ) au serveur qui se chargera de le diffuser a tous
+   les utilisateurs dans la meme salle que lui.
+
+6.2.  du serveur vers le client
+
+Authors' Addresses
+
+   Guillaume BERTHOME
+   Telecom Bretagne
+   Brest
+   France
+
+   Email: guillaume.berthome@telecom-bretagne.eu
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 6, 2017                [Page 7]
+
+                            Abbreviated Title                 April 2017
+
+
+   Matthieu BACHELOT
+   Telecom Bretagne
+   Brest
+   France
+
+   Email: matthieu.bachelot@telecom-bretagne.eu
+
+
+   Romain JUILLET
+   Telecom Bretagne
+   Brest
+   France
+
+   Email: romain.juillet@telecom-bretagne.eu
+
+
+   Serigne DIOUF
+   Telecom Bretagne
+   Brest
+   France
+
+   Email: serigne.diouf@telecom-bretagne.eu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 6, 2017                [Page 8]

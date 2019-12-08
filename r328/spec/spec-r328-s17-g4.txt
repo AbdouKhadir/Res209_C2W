@@ -1,0 +1,672 @@
+
+
+
+
+                                                             G. BERTHOME
+                                                             M. BACHELOT
+                                                              F. JUILLET
+                                                                S. DIOUF
+                                                        Telecom Bretagne
+                                                           April 6, 2017
+
+
+              Group 4: c2w protocol specification proposal
+                     draft-ietf-xml2rfc-template-05
+
+Abstract
+
+   Ce document a pour but d'enoncer les specifications du porotocole
+   utiilise dans l'application C2W.  Il est compose d'une partie sur les
+   differents types de trames, d'une partie detaillant les champs de
+   l'en-tete, une troiseme partie sur les differents scenarios possibles
+   et enfin uen derniere partie pour expliquer ce que contiennent les
+   message ainsi que leur utilite.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   1
+   2.  Fonctionnement  . . . . . . . . . . . . . . . . . . . . . . .   2
+   3.  Format des paquets  . . . . . . . . . . . . . . . . . . . . .   2
+   4.  Explication des champs de l'en-tete . . . . . . . . . . . . .   4
+   5.  Scenarios et explication des messages . . . . . . . . . . . .   4
+     5.1.  Scenario 1 : Connexion  . . . . . . . . . . . . . . . . .   5
+       5.1.1.  Connexion a l'application . . . . . . . . . . . . . .   5
+       5.1.2.  Connexion a une movie room  . . . . . . . . . . . . .   7
+       5.1.3.  Retour a la main room . . . . . . . . . . . . . . . .   7
+     5.2.  Scenario 2 : Deconnexion  . . . . . . . . . . . . . . . .   8
+       5.2.1.  Le client se deconnecte . . . . . . . . . . . . . . .   8
+       5.2.2.  Le client est deconnecte apres inactivite . . . . . .   8
+     5.3.  Envoi d'un message de chat  . . . . . . . . . . . . . . .   9
+   6.  Les messages c2w  . . . . . . . . . . . . . . . . . . . . . .  10
+     6.1.  Exemple1 : Connexion / Deconnexion  . . . . . . . . . . .  10
+     6.2.  Exemple2 : regarder un film . . . . . . . . . . . . . . .  11
+     6.3.  Exemple3 : chatter avec les autres clients  . . . . . . .  11
+     6.4.  S --> C 3xemple4 : message keepAlive  . . . . . . . . . .  11
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  11
+
+1.  Introduction
+
+   Le protocole C2W permet la communication instantanee entre plusieurs
+   utilisateurs sur l'application C2W.  Cette derniere permet de pouvoir
+   regarder des film en streaming tout en conversant avec les autres
+
+
+
+
+BERTHOME, et al.         Expires October 8, 2017                [Page 1]
+
+                            Abbreviated Title                 April 2017
+
+
+   membres regardant le meme film.  Il est egalement possible de
+   converser avec l'ensemble des utilisateurs sur une salle principale.
+
+2.  Fonctionnement
+
+   C2W est une application permettant a la fois de regarder des films en
+   streaming et de tchatter en direct avec les autres membres visionnant
+   le meme film.  L'utilisateur se connecte au serveur en indiquant un
+   nom d'utilisateur qui permettra de l'identifier sur l'application.
+   Tous les membres sont listes dans un panneau, avec leur statut : A
+   lorsqu'il ne visionne pas de films, M lorsqu'il visionne un film.
+   Apres connexion, l'utilisation arrive dans la Main Room de
+   l'application : c'est sur interface que l'utilisateur peur choisir un
+   film a visionner et egalement voir tous les utilisateurs qui sont
+   actuellement connectes sur le serveur.  Dans cette room,
+   l'utilisateur peut converser avec tous les membres connectes sur le
+   serveur qui ne sont pas entrain de visionner un film.  Lorsque
+   l'utilisateur selectionne un film a visionner, il entre dans une
+   "Moovie Room".  Il peut alors uniquement converser avec les membres
+   visionnant le meme film que lui.
+
+3.  Format des paquets
+
+   Le protocol C2W utilise differents formats de paquet en fonction des
+   differents messages a envoyer.  Tous les paquets sont transmis en
+   binaire.
+
+   Message de Chat :
+
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |F|LEN|                                                         |
+       +-+-+-+                                                         |
+       |                                                               |
+       |                                                               |
+       |                                                               |
+       .                                                               .
+       .                       Message Data                            .
+       .                                                               .
+       |                                                               |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   F = FLAG (1 octet) LEN = LENGTH (2 octets) Message Data = (taille
+   dynamique) Ce champ est de la forme suivante :
+   nom_utilisateur@message
+
+   ACK (acknowledgement), Keepalive et message d'erreur :
+
+
+
+
+
+BERTHOME, et al.         Expires October 8, 2017                [Page 2]
+
+                            Abbreviated Title                 April 2017
+
+
+       +-+
+       |F|
+       +-+
+
+   F = FLAG (1 octet)
+
+   Message de Connexion :
+
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |F|         USER NAME             |IP ROOM|
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   F = FLAG (1 octet) USER NAME = nom de l'utilisateur (16 octets) Si le
+   nom de l'utilisateur fait 16 octets, ce champ contient seulement le
+   nom.  Sinon, ce champ contient le nom auquel on ajoute des caracteres
+   "@" pour arriver a 16 octets.  IP ROOM = adresse IP (4 octets).  Pour
+   une connexion a l'application ou un retour vers la main room, ce
+   champ a la valeur 0.0.0.0 Pour une connexion a une movie, ce champ a
+   la valeur de l'adresse IP du film en question.
+
+   Message d'information sur une liste
+
+       +-+-+-+
+       |F| T |
+       +-+-+-+
+
+   F = FLAG (1 octet) T = TAILLE (2 octets) Ce champ peut contenir le
+   nombre de films dispniobles pour visionnage dans la main room ou le
+   nombre d'utilisateurs disponibles.
+
+   Message element d'une liste:
+
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |F|LEN|                                                         |
+       +-+-+-+                                                         |
+       |                                                               |
+       |                                                               |
+       |                        Message Data                           |
+       .                                                               .
+       .                                                               .
+       .                                                               .
+       |                                                               |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   F = FLAG (1 octet) LEN = LENGTH (2 octets) Message Data = (taille
+   dynamique) Dans le cas de l'envoi des films, le champ "message data"
+   aura la forme suivante : nom_du_film;adresse_IP Dans le cas de
+
+
+
+
+BERTHOME, et al.         Expires October 8, 2017                [Page 3]
+
+                            Abbreviated Title                 April 2017
+
+
+   l'envoi des utilisateurs, le champ "message data" aura la forme
+   suivante : nom_utilisateur;status(A/M)
+
+4.  Explication des champs de l'en-tete
+
+   Cette partie est consacree a l'explication des differents champs
+   rencontres dans les messages deinis dans la partie precedente.  - Le
+   champ "FLAG" permet de determiner le type de message envoye.  Ce
+   champ est la premier de tous les messages envoyes.  Il est code sur
+   un octet et peut prendre les valeurs suivantes (donnees ici en base
+   decimale) : - 011 : envoi du nombre de films disponibles pour le
+   visionnage - 012 : envoi du nombre d'utilisateurs connectes dans la
+   main room ou dans une movie room - 110 : Deconnexion (quitter
+   l'application) - 111 : Connexion - Connexion a l'application et
+   connexion a une movie room - Connexion de la main room a la movie
+   room - 121 : L'acquittement - 123 : message d'erreur en cas
+   d'identifiant existant - 210 : envoi d'un message de chat - 255 :
+   Keepalive - Le champ "LENG" permet de connaitre la taille du paquet
+   entier (en-tete + "message data") pour les messages a taille
+   dynamique (message de chat, envoi d'utilisateurs, envoi de films).
+
+5.  Scenarios et explication des messages
+
+   A NOTER : dans les echanges des differents scenarios, si un message
+   n'arrive pas a destination, il est renvoye trois fois de suite avec
+   un intervalle de trois secondes.
+
+
+
+
+                  Client                                         Serveur
+                    |                                               |
+                    |             Message 1 (Request)               |
+           ---------|------------------------------------
+           |        |               (111 CONNECT)                   |
+           |        |                                               |
+      3s   |        |                                               |
+           |        |                                               |
+           |        |            Message 1 (Request)                |
+           -------->|---------------------------------------------->|
+                    |               (111 CONNECT)                   |
+                    .                                               .
+                    .                                               .
+                    .                                               .
+
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 8, 2017                [Page 4]
+
+                            Abbreviated Title                 April 2017
+
+
+   Si jamais apres ces trois essais le message n'est toujours pas arrive
+   a destination, l'action en coursn est alors arretee et l'utilisateur
+   est prevenu.
+
+
+
+                  Client                                         Serveur
+                    |                                               |
+                    |             Message 1 (Request)               |
+           ---------|------------------------------------
+           |        |               (111 CONNECT)                   |
+           |        |                                               |
+      3s   |        |                                               |
+           |        |                                               |
+           |        |            Message 1 (Request)                |
+           -------->|---------------------------------
+           |        |               (111 CONNECT)                   |
+           |        |                                               |
+      3s   |        |                                               |
+           |        |                                               |
+           |        |             Message 1 (Request)               |
+           ---------|------------------------------------
+           |        |               (111 CONNECT)                   |
+           |        |                                               |
+      3s   |        |                                               |
+           |        |                                               |
+           |        |            Message 1 (Request)                |
+           -------->|---------------------------------
+                    |               (111 CONNECT)                   |
+                    |                                               |
+                    |                                               |
+                    X                                               X
+
+
+5.1.  Scenario 1 : Connexion
+
+5.1.1.  Connexion a l'application
+
+   L'utilisateur se connecte a l'appliation via une interface graphique.
+   Il peut renseigner sur celle-ci l'adresse du serveur, le port ainsi
+   que son nom d'utilisateur.
+
+   Le contenu de chaque message est detaille dans la partie XXX.
+
+
+      Client                                          Serveur
+        |                                               |
+        |             Message 1 (Request)               |
+
+
+
+BERTHOME, et al.         Expires October 8, 2017                [Page 5]
+
+                            Abbreviated Title                 April 2017
+
+
+        |---------------------------------------------->|
+        |           (111 CONNECT + @IP =0)              |
+        |                                               |
+        |                                               |
+        |                                               |
+        |               Message 2 (Response)            |
+        |<----------------------------------------------|
+        |                 (011 SENDMVNB)                |
+        |                                               |
+        |                                               |
+        |                                               |
+        |               Message 3 (Ack)                 |
+        |---------------------------------------------->|
+        |                   (121 SUCCESS)               |
+        |                                               |
+        |                                               |
+        |                                               |
+        |                     Message 4                 |
+        |<----------------------------------------------|
+        |                (012 * NBMV GETMV)             |
+        |                                               |
+        |                                               |
+        |                                               |
+        |               Message 5 (Ack)                 |
+        |---------------------------------------------->|
+        |                  (121 SUCCESS)                |
+        |                                               |
+        |                                               |                                        Tous les Clients
+        |                                               |                   Message 6                   |
+        |                                               |---------------------------------------------->|
+        |                                               |                (021 SENDUSNB)                 |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                 Message 7 (Ack)               |
+        |                                               |<----------------------------------------------|
+        |                                               |                (121 SUCCESS)                  |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                  Message 8                    |
+        |                                               |---------------------------------------------->|
+        |                                               |                (022 * NBUS GETUS)             |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                 Message 9 (Ack)               |
+        |                                               |<----------------------------------------------|
+
+
+
+BERTHOME, et al.         Expires October 8, 2017                [Page 6]
+
+                            Abbreviated Title                 April 2017
+
+
+        |                                               |                  (121 SUCCESS)                |
+
+5.1.2.  Connexion a une movie room
+
+   La connexion a une room revient a selectionner un film parmi ceux
+   proposes dans la liste de la main room.  L'utilisateur pourra ensuite
+   visionner la film choisi et converser avec tous les autres membres
+   visionnant le meme film.
+
+
+
+
+     Alice                                            Serveur
+        |                                               |
+        |             Message 1 (Request)               |
+        |---------------------------------------------->|
+        |             (111 CONNECT + @IP)               |                                   Tous les clients de la room
+        |                                               |                   Message 2                   |
+        |                                               |---------------------------------------------->|
+        |                                               |                (021 SENDUSNB)                 |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                 Message 3 (Ack)               |
+        |                                               |<----------------------------------------------|
+        |                                               |                (121 SUCCESS)                  |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                Message 4                      |
+        |                                               |---------------------------------------------->|
+        |                                               |                (022 * NBUS GETUS)             |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                 Message 5 (Ack)               |
+        |                                               |<----------------------------------------------|
+        |                                               |                  (121 SUCCESS)                |
+
+
+
+5.1.3.  Retour a la main room
+
+   Le retour a la main room revient a faire une connexion a
+   l'application.  Le processus de connexion est explique dans la partie
+   precedente.
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 8, 2017                [Page 7]
+
+                            Abbreviated Title                 April 2017
+
+
+5.2.  Scenario 2 : Deconnexion
+
+   Lorsqu'un utilisateur est sur la Main Room, il peut decider a tout
+   moment de se deconnecter.  Pour cela, il dispose d'un bouton "Leave".
+   Cette deconnexion peut egalement etre non volontaire (probleme de
+   reseau, coupure d'electricite...).
+
+5.2.1.  Le client se deconnecte
+
+
+      Client                                         Serveur                                      Autres clients
+        |                                               |                                               |
+        |             Message 1 (Request)               |                                               |
+        |---------------------------------------------->|                                               |
+        |               (110 DISCONNECT)                |                                               |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                 Message 3                     |
+        |                                               |---------------------------------------------->|
+        |                                               |                (021 SENDUSNB)                 |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                 Message 4 (Ack)               |
+        |                                               |<----------------------------------------------|
+        |                                               |                (121 SUCCESS)                  |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                    Message 5                  |
+        |                                               |---------------------------------------------->|
+        |                                               |                (022 * NBUS GETUS)             |
+        |                                               |                                               |
+        |                                               |                                               |
+        |                                               |                 Message 4 (Ack)               |
+        |                                               |<----------------------------------------------|
+        |                                               |                (121 SUCCESS)                  |
+
+
+
+5.2.2.  Le client est deconnecte apres inactivite
+
+
+
+
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 8, 2017                [Page 8]
+
+                            Abbreviated Title                 April 2017
+
+
+                Client                                         Serveur                                      Autres clients
+                  |                                               |                                               |
+                  |             Message 1 (KeepAlive)             |                                               |
+         ---------|---------------------------------------------->|                                               |
+         |        |               (225 KEEPALIVE)                 |                                               |
+         |        |                                               |                                               |
+       T |        |                                               |                                               |
+         |        |                                               |                                               |
+         |        |            Message 2 (KeepAlive)              |                                               |
+         -------->|---------------------------------------------->|---------                                      |
+                  |               (225 KEEPALIVE)                 |        |                                      |
+                  |                                               |        |                                      |
+                  |                                               |        | 3T                                   |
+                  |                                               |        |                                      |
+                  |                                               |<--------                                      |
+                  |                                               |                                               |
+                  |                                               |                                               |
+                  |                                               |                 Message 3                     |
+                  |                                               |---------------------------------------------->|
+                  |                                               |                (021 SENDUSNB)                 |
+                  |                                               |                                               |
+                  |                                               |                                               |
+                  |                                               |                                               |
+                  |                                               |                 Message 4 (Ack)               |
+                  |                                               |<----------------------------------------------|
+                  |                                               |                (121 SUCCESS)                  |
+                  |                                               |                                               |
+                  |                                               |                                               |
+                  |                                               |                                               |
+                  |                                               |                Message 5 (Response)           |
+                  |                                               |---------------------------------------------->|
+                  |                                               |                (022 * NBUS GETUS)             |
+                  |                                               |                                               |
+                  |                                               |                                               |
+                  |                                               |                 Message 6 (Ack)               |
+                  |                                               |<----------------------------------------------|
+                  |                                               |                (121 SUCCESS)                  |
+
+
+
+5.3.  Envoi d'un message de chat
+
+
+
+
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 8, 2017                [Page 9]
+
+                            Abbreviated Title                 April 2017
+
+
+                      Client                                         Serveur                                      Destinataires
+                        |                                               |                                               |
+                        |                  Message 1                    |                                               |
+                        |---------------------------------------------->|                                               |
+                        |               (210 CHAT)                      |                                               |
+                        |                                               |                                               |
+                        |                                               |                                               |
+                        |                 Message 2 (Ack)               |                                               |
+                        |<----------------------------------------------|                                            |
+                        |                   (121 SUCCESS)               |                                               |
+                        |                                               |                                               |
+                        |                                               |                                               |
+                        |                                               |                                               |
+                        |                                               |                 Message 3                     |
+                        |                                               |<----------------------------------------------|
+                        |                                               |                (210 CHAT)                     |
+                        |                                               |                                               |
+                        |                                               |                                               |
+                        |                                               |                 Message 4                              |
+                        |                                               |<----------------------------------------------|
+                        |                                               |                (121 SUCCESS)                  |
+
+
+6.  Les messages c2w
+
+   Chaque message est precede d'un numero de flag rajoute par le
+   protocole selon la source et la nature du message (voir les plages de
+   flags dans "format de paquet").
+
+6.1.  Exemple1 : Connexion / Deconnexion
+
+   Pour se connecter, le client doit disposer d'un nom d'utilisateur
+   unique d'une longueur maximale de 16 caracteres (non speciaux).  Il
+   sera code en binaire avec le flag dedie "111" (voir Format des
+   paquets).  Si le nom d'utilisateur est inferieur a 16 caracteres, il
+   sera "bourre" avec des caracteres "@" En acquittement de la
+   connexion, le client recoit la liste des films pret pour visionnage.
+   Le serveur envoi ensuite la liste de tous les utilisateurs avec leur
+   status a l'ensemble des membres (y compris le nouveau).  Il peut
+   ensuite converser avec les membres disponibles dans la main room ou
+   selectionner un film.  Si le nom d'utilisateur renseigne est deja
+   pris, un message d'erreur de taille fixe est envoye avec le flag 123.
+   Dans les cas ou le client n'a pas respecte la taille maximale
+   autorisee ou a utilise des caracteres speciaux, un simple message
+   popUp sera genere localement.  Aucun message au serveur ne sera
+   envoye.  En cas de deconnexion, le client envoie un message du meme
+   format avec le flag "110".
+
+
+
+
+BERTHOME, et al.         Expires October 8, 2017               [Page 10]
+
+                            Abbreviated Title                 April 2017
+
+
+6.2.  Exemple2 : regarder un film
+
+   Pour regarder un film parmi ceux de la liste proposee par le serveur,
+   l'utilisateur envoie un message precede du flag "111" contenant
+   l'adresse IP a laquelle est associe ce film et son nom d'utilisateur.
+   En acquittement de la connexion, le client recoit la liste des
+   utilisateurs regardant ce meme film.  Pour revenir a la salle
+   principale, le client envoi le flag 111 avec son nom d'utilisateur et
+   une adresse IP valant 0.0.0.0.
+
+6.3.  Exemple3 : chatter avec les autres clients
+
+   Pour chatter avec les autres clients, l'utilisateur envoie un message
+   (de taille dynamique, voir Format de Paquet ) au serveur avec le flag
+   "210".  Le message recu par le serveur est diffuse a tous les clients
+   disponibles, y compris l'auteur en ajoutant 210.  L'auteur recoi un
+   acquittement du serveur lorsque ce dernier recoit le message a
+   diffuser, et chacun des destinataires envoient un acquitement.  Le
+   client enregistre en local 20 messages afin de pouvoir afficher un
+   bref historique de conversation lorsqu'un utilisateur arrive dans une
+   room (main ou movie).
+
+6.4.  S --> C 3xemple4 : message keepAlive
+
+   Les keepAlive sont des messages envoyes toutes les 5 min par les
+   clients au serveur.  Lorsque les clients sont inactifs pendant 15 min
+   (i.e. lorsque le serveur ne recoit pas 3 keepAlive), le serveur
+   deconnecte automatiquement l'utilisateur selon le scenario explique
+   precedemment.  Le flag 255 est alors utilise avec un message de
+   taille fixe.
+
+Authors' Addresses
+
+   Guillaume BERTHOME
+   Telecom Bretagne
+   Brest
+   France
+
+   Email: guillaume.berthome@telecom-bretagne.eu
+
+
+   Matthieu BACHELOT
+   Telecom Bretagne
+   Brest
+   France
+
+   Email: matthieu.bachelot@telecom-bretagne.eu
+
+
+
+
+BERTHOME, et al.         Expires October 8, 2017               [Page 11]
+
+                            Abbreviated Title                 April 2017
+
+
+   Romain JUILLET
+   Telecom Bretagne
+   Brest
+   France
+
+   Email: romain.juillet@telecom-bretagne.eu
+
+
+   Serigne DIOUF
+   Telecom Bretagne
+   Brest
+   France
+
+   Email: serigne.diouf@telecom-bretagne.eu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BERTHOME, et al.         Expires October 8, 2017               [Page 12]

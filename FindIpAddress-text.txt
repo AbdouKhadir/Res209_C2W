@@ -1,0 +1,224 @@
+
+
+
+Sample Protocol Specification                                   A. Blanc
+                                                        Telecom Bretagne
+                                                               June 2014
+
+
+      Sample Protocol Specification:  FindIpAddress (Text Version)
+
+Abstract
+
+   Sample protocol specification for the binary version of the
+   FineIpAddress protocol.  The goal of this protocol is to allow a
+   client to query a server to find the IP address corresponding to a
+   given name.  This an overly-simplified protocol which is only meant
+   as a simple example.
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . . . 2
+     1.1.  Requirements Language . . . . . . . . . . . . . . . . . . . 2
+   2.  Message Format  . . . . . . . . . . . . . . . . . . . . . . . . 2
+   3.  Reliability . . . . . . . . . . . . . . . . . . . . . . . . . . 2
+   4.  Server Configuration and Multiple Servers . . . . . . . . . . . 3
+   5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+   6.  Normative References  . . . . . . . . . . . . . . . . . . . . . 3
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . . . 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Blanc                                                           [Page 1]
+
+                       FindIpAddress Text Protocol             June 2014
+
+
+1.  Introduction
+
+   The goal of the FindIpAddress protocol is to allow clients to find
+   the IP address that corresponds to a given name.  Each client MUST
+   know the IP address and corresponding port number of at least one
+   instance of a FindIpAddress server.
+
+   For the sake of simplicity, the message format is the same for all
+   the messages.
+
+   Clients can use either UDP or TCP to exchange messages with a server.
+   When sending a reply, the server MUST use the same layer four
+   protocol used by the client for the corresponding request.
+
+1.1.  Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [RFC2119].
+
+
+2.  Message Format
+
+   All messages have the same format:
+
+           <IP Address> CRLF
+           <Name> CRLF
+
+   Where CR represents the ASCII character "Carriage Return" (13) and LF
+   represents the ASCII character "Line Feed" (10). <Name> is the name
+   for which the client would like to find the corresponding IP address.
+   In a request <IP Address> MUST be '0' (without the quotation marks).
+   In a positive response <IP Address> MUST contain the dotted decimal
+   representation of the IP address (e.g., 135.34.231.3).  In a negative
+   response <IP Address> MUST contain '0' (again without the quotation
+   marks).
+
+   The server MUST always reply to a request, either with a positive
+   response (in this case the IP Address field contains the IP address
+   corresponding to the name requested by the client) or with a negative
+   response (in this case the IP Address field MUST be set to 0).
+
+
+3.  Reliability
+
+   When using UDP, a client MAY resend a request for which it has not
+   yet received a response after a certain time.  In order not to
+   overload servers, clients SHOULD wait at least 2 seconds before
+
+
+
+Blanc                                                           [Page 2]
+
+                       FindIpAddress Text Protocol             June 2014
+
+
+   resending a request.
+
+
+4.  Server Configuration and Multiple Servers
+
+   Each server MUST maintain a local data base mapping names to IP
+   addresses.  If a server does not find a certain name in its local
+   data base, instead of immediately sending a negative response, the
+   server MAY contact one or more other servers, asking if they know the
+   IP address corresponding to the name requested by the client.  Upon
+   receiving a response the server should forward it to the
+   corresponding client.  Note that in this case it is up to the server
+   to resend the request to another server, if it has not received a
+   response after a certain time.
+
+
+5.  Examples
+
+   Suppose a client would like to know the IP address corresponding to
+   the computer1.example.com name.  It should send the following message
+   to the server (recall that CR represents the ASCII character
+   "Carriage Return" (13) and LF represents the ASCII character "Line
+   Feed" (10)):
+
+       0CRLF
+       computer1.example.comCRLF
+
+   If the IP address of the computer1.example.com name is 34.23.44.1,
+   the server MUST respond with the following message:
+
+       34.23.44.1CRLF
+       computer1.example.comCRLF
+
+   If, instead, the requested name does not exist, the server MUST
+   respond with the following message:
+
+       0CRLF
+       computer1.example.comCRLF
+
+
+6.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+
+
+
+
+
+
+Blanc                                                           [Page 3]
+
+                       FindIpAddress Text Protocol             June 2014
+
+
+Author's Address
+
+   Alberto Blanc
+   Telecom Bretagne
+   Cesson Sevigne,
+   France
+
+   Phone: +33 02 99 12 24 25
+   Email: alberto.blanc@telecom-bretagne.eu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Blanc                                                           [Page 4]
+
